@@ -9,17 +9,11 @@ struct CBNode {
     int balance = 0;
 };
 
-int HeightCB(CBNode* root);
-void SetBalanceCB(CBNode* root);
-void TurnRightCB(CBNode*& root) ;
-void TurnLeftCB(CBNode*& root);
-void InsertCB(CBNode*& root, int key);
-bool SearchCB(CBNode* root, int key);
-CBNode* MinValueCBNode(CBNode* AVLNode);
-void DeleteCBNode(CBNode*& root, int key);
-void InOrderCB(CBNode* root);
+
+void InsertCB(CBNode*& root, int value, int index, int count);
+bool SearchCB(CBNode* node, int value);
 void PrintTreeCB(CBNode* root, int space = 0);
-void writeNodeToFile(CBNode* node, ofstream& file, int depth);
-void writeToFileCB(CBNode* root, ofstream& file);
-void readFromFileCB(CBNode*& root, ifstream& file);
-void clearCB(CBNode*& root);
+void writeNodeToFile(CBNode* node, ofstream& file);
+void writeToFileCB(CBNode* root, const string& filename);
+void readFromFile(CBNode*& root, const string& filename);
+void deleteTree(CBNode*& node);

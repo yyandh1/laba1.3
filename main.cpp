@@ -9,6 +9,8 @@
 #include "LISTtwo.h"
 #include "QUEUE.h"
 #include "STACK.h"
+// #include <unistd.h> // Для getcwd (Unix)
+#include <direct.h> // Для _getcwd (Windows)
 
 using namespace std;
 
@@ -73,34 +75,38 @@ void handleArrayCommands(ArrayNode*& arr) {
     }
 }
 
-   
-
-
 void handleCBCommands(CBNode*& root) {
-
     string command;
+    int count = 0; // Для отслеживания количества узлов
+
     while (true) {
         cout << ">> ";
         cin >> command;
 
         if (command == "CBINSERT") {
             int value;
+            cout << "Введите значение: ";
             cin >> value;
-            InsertCB(root, value);
-            ofstream outFile("CB.txt", ios::trunc);
-            writeToFileCB(root, outFile);
-            outFile.close();
+
+            // Вставка узла и увеличение счетчика
+            InsertCB(root, value, count, count + 1);
+            count++;
+
+            // Запись дерева в файл
+            ofstream file("CB.txt");
+            if (!file) {
+                cout << "Не удалось открыть файл для записи.\n";
+                return;
+            }
+            writeNodeToFile(root, file);
+            file.close();
+
+            cout << "Значение " << value << " вставлено." << endl;
         }
-        else if (command == "CBDEL") {
-            int value;
-            cin >> value;
-            DeleteCBNode(root, value);
-            ofstream outFile("AVL.txt", ios::trunc);
-            writeToFileCB(root, outFile);
-            outFile.close();
-        }
+        
         else if (command == "CBSEARCH") {
             int value;
+            cout << "Введите значение для поиска: ";
             cin >> value;
             if (SearchCB(root, value)) {
                 cout << "Значение " << value << " найдено." << endl;
@@ -121,6 +127,7 @@ void handleCBCommands(CBNode*& root) {
         }
     }
 }
+
 
 void handleHashCommands(Hash& hashTable) {
 
@@ -396,6 +403,7 @@ int main() {
         }
         else if (command == "CB") {
             handleCBCommands(root);
+
         }
         else if (command == "HASH") {
             handleHashCommands(hashTable);
@@ -422,7 +430,7 @@ int main() {
 
     // Очистка памяти
     clearArray(arr);
-    clearCB(root);
+
     hashTable.clearH();
     clearListLO(list);
     clearListLS(list2);
