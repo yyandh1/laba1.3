@@ -1,10 +1,9 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <cmath>
+
 
 using namespace std;
-
 
 struct CBNode {
     int value;
@@ -14,78 +13,93 @@ struct CBNode {
     CBNode(int val) : value(val), left(nullptr), right(nullptr) {}
 };
 
-
-// Функция для подсчета количества узлов в дереве
-// int countNodes(CBNode* node) {
-//     if (node == nullptr) return 0;
-//     return 1 + countNodes(node->left) + countNodes(node->right);
-// }
 int countNodes(CBNode* root) {
     if (root == nullptr)
-        return(0);
-    return 1 + countNodes (root->left) + countNodes(root->right);
+        return 0;
+    return 1 + countNodes(root->left) + countNodes(root->right);
 }
 
-void InsertCB(CBNode* root, int value) {
-    CBNode* trueRoot = root;
-    int currentDeph = trueRoot->value;
-    if (pow(2, currentDeph) - 1 != countNodes(root)) {
-        while (currentDeph != 2) {
-            if (countNodes(root->left) != pow(2, --currentDeph) - 1) {
-                root = root->left;
-            }
-            else {
-                root = root->right;
-            }
-        }
-        if (root->left == NULL) {
-            root->left = new CBNode(value);
-        }
-        else {
-            root->right = new CBNode(value);
-        }
+void InsertCB(CBNode*& root, int value) {
+    if (root == nullptr) {
+        root = new CBNode(value);
+        return;
     }
-    else {
-        currentDeph = trueRoot->value;
-        while (currentDeph |= 1){
-            root = root->left; 
-            currentDeph--;
-        }
+
+    // Если есть место в левом поддереве, вставляем туда
+    if (root->left == nullptr) {
         root->left = new CBNode(value);
-        trueRoot->value++;
+        return;
+    } 
+    // Если есть место в правом поддереве, вставляем туда
+    else if (root->right == nullptr) {
+        root->right = new CBNode(value);
+        return;
+    }
+    
+    // Если оба поддерева заполнены, рекурсивно пробуем вставить в левое или правое поддерево
+    if (countNodes(root->left) <= countNodes(root->right)) {
+        InsertCB(root->left, value);
+    } else {
+        InsertCB(root->right, value);
     }
 }
 
-// Вставка узла в полное двоичное дерево
-// void InsertCB(CBNode*& root, int value) {
-//     if (root == nullptr) {
-//         root = new CBNode(value);
-//         return;
-//     }
 
-//     // Используем рекурсивную вставку
-//     if (countNodes(root->left) <= countNodes(root->right)) {
-//         InsertCB(root->left, value);
-//     } else {
-//         InsertCB(root->right, value);
-//     }
-// }
+// Остальные функции остаются без изменений
+// Удаление узла, поиск минимального/максимального значений, обходы и т.д/
+
+// Поиск минимального значения
+int findMin(CBNode* node) {
+    if (node == nullptr) return INT_MAX;
+    return min(node->value, min(findMin(node->left), findMin(node->right)));
+}
+
+// Поиск максимального значения
+int findMax(CBNode* node) {
+    if (node == nullptr) return INT_MIN;
+    return max(node->value, max(findMax(node->left), findMax(node->right)));
+}
+
+// Прямой обход (pre-order)
+void printPreOrder(CBNode* node) {
+    if (node == nullptr) return;
+    cout << node->value << " ";
+    printPreOrder(node->left);
+    printPreOrder(node->right);
+}
+
+// Симметричный обход (in-order)
+void printInOrder(CBNode* node) {
+    if (node == nullptr) return;
+    printInOrder(node->left);
+    cout << node->value << " ";
+    printInOrder(node->right);
+}
+
+// Обратный обход (post-order)
+void printPostOrder(CBNode* node) {
+    if (node == nullptr) return;
+    printPostOrder(node->left);
+    printPostOrder(node->right);
+    cout << node->value << " ";
+}
 
 // Запись узлов в файл с отступами
 void writeNodeToFile(CBNode* node, ofstream& file, int depth) {
     if (!node) return;
 
+    // Запись левого поддерева
     writeNodeToFile(node->left, file, depth + 1);
     
-    file << setw(depth * 4) << "";
-    file << node->value << endl;
+    // Запись текущего узла с отступами
+    file << setw(depth * 4) << ""; // Устанавливаем отступы
+    file << node->value << endl; // Записываем значение узла
 
+    // Запись правого поддерева
     writeNodeToFile(node->right, file, depth + 1);
 }
 
-// Запись всего дерева в файл
-void writeToFileCB(CBNode* root, const string& filename) {
-    ofstream file(filename);
+void writeToFileCB(CBNode* root, ofstream& file) {
     if (!file) {
         cout << "Не удалось открыть файл для записи.\n";
         return;
@@ -96,50 +110,73 @@ void writeToFileCB(CBNode* root, const string& filename) {
     } else {
         writeNodeToFile(root, file, 0);
     }
-    file.close();
 }
+
+
+
 
 // Поиск элемента в дереве
 bool SearchCB(CBNode* node, int val) {
     if (node == nullptr) {
         return false;
     }
-    if (node-> value == val) {
+    if (node->value == val) {
         return true;
     }
     return SearchCB(node->left, val) || SearchCB(node->right, val);
 }
 
-// Функция для вывода дерева
-void PrintTreeCB(CBNode* root, int space = 0) {
-    if (!root) return;
-
-    // Увеличиваем отступ для следующего уровня
-    space += 4;
-
-    // Выводим правое поддерево
-    PrintTreeCB (root->right, space);
-
-    // Выводим текущий узел с отступами
-    cout<<endl;
-    for (int i = 4; i < space; i++)
-        cout <<" ";
-    cout <<root->value<< "\n";
-
-    // Выводим левое поддерево
-    PrintTreeCB (root->left, space);
+// Вспомогательная функция для вывода узлов на текущем уровне
+void PrintLevel(CBNode* node, int level) {
+    if (node == nullptr) {
+        return;
+    }
+    
+    if (level == 1) {
+        cout << node->value << " "; // Вывод значения узла
+    } else {
+        PrintLevel(node->left, level - 1);  // Обход левого поддерева
+        PrintLevel(node->right, level - 1); // Обход правого поддерева
+    }
 }
 
+// Функция для определения высоты дерева
+int Height(CBNode* node) {
+    if (node == nullptr) {
+        return 0;
+    }
+    return max(Height(node->left), Height(node->right)) + 1;
+}
+
+// Функция для вывода дерева в виде "змейки"
+void PrintTreeCB(CBNode* root) {
+    int height = Height(root); // Определяем высоту дерева
+
+    for (int i = 1; i <= height; i++) {
+        PrintLevel(root, i); // Выводим узлы на текущем уровне
+        cout << endl; // Переход на новую строку после каждого уровня
+    }
+}
 // Функция для очистки дерева и освобождения памяти
 void clearCB(CBNode*& root) {
     if (root == nullptr) return;
 
-    // Рекурсивно очищаем левое и правое поддеревья
     clearCB(root->left);
     clearCB(root->right);
 
-    // Освобождаем память текущего узла
     delete root;
     root = nullptr; // Устанавливаем указатель в nullptr
 }
 
+bool DeleteCB(CBNode*& root, int value) {
+    if (root == nullptr) return false;
+
+    if (root->value == value) {
+        clearCB(root);
+        return true;
+    }
+    if (DeleteCB(root->left, value) || DeleteCB(root->right, value)) {
+        return true;
+    }
+    return false;
+}

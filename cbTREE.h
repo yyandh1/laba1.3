@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 
 using namespace std;
 
@@ -8,13 +7,22 @@ struct CBNode {
     CBNode* left;
     CBNode* right;
 
-    CBNode(int val) : value(val), left(nullptr), right(nullptr) {}
+    CBNode(int val);
 };
 
-// Функции для работы с полным двоичным деревом
-void InsertCB(CBNode* root, int value);
-void writeToFileCB(CBNode* root, const string& filename);
+// Функции для работы с бинарным деревом
+int countNodes(CBNode* root);
+void InsertCB(CBNode*& root, int value);
+bool DeleteCB(CBNode*& root, int value);
+int findMin(CBNode* node);
+int findMax(CBNode* node);
+void printPreOrder(CBNode* node);
+void printInOrder(CBNode* node);
+void printPostOrder(CBNode* node);
 void writeNodeToFile(CBNode* node, ofstream& file, int depth);
-bool SearchCB(CBNode* node, int value);
-void PrintTreeCB(CBNode* root, int space = 0);
+void writeToFileCB(CBNode* root, ofstream& file);
+bool SearchCB(CBNode* node, int val);
+void PrintTreeCB(CBNode* root);
 void clearCB(CBNode*& root);
+void PrintLevel(CBNode* node, int level);
+int Height(CBNode* node);

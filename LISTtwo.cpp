@@ -102,7 +102,7 @@ bool deleteByValueLT(NodeLT*& head, NodeLT*& tail, int value) {
 
 
 // Поиск элемента по значению
-NodeLT* searchLS(NodeLT* head, int value) {
+NodeLT* searchLT(NodeLT* head, int value) {
     NodeLT* current = head;
     while (current) {
         if (current->data == value) {

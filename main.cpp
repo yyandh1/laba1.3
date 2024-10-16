@@ -83,8 +83,6 @@ void handleARRAYCommands(ARRAY& arr) {
     }
 }
 
-
-// Обработчик команд для дерева
 void handleCBCommands(CBNode*& root) {
     string command;
 
@@ -93,29 +91,40 @@ void handleCBCommands(CBNode*& root) {
         cin >> command;
 
         if (command == "CBINSERT") {
-            int val;
-            cout << "Введите значение: ";
-            cin >> val;
-
+            int value;
+            cin >> value;
             // Вставка узла
-            InsertCB(root, val);
+            InsertCB(root, value);
+            ofstream outFile("CB.txt", ios::trunc);
+            writeToFileCB(root, outFile);
+            outFile.close();
+            cout << "Значение " << value << " вставлено." << endl;
+        } else if (command == "CBDEL") {
+            int value;
+            cout << "Введите значение для удаления: ";
+            cin >> value;
 
-            // Запись дерева в файл
-            writeToFileCB(root, "CB.txt");
-
-            cout << "Значение " << val << " вставлено." << endl;
-        } else if (command == "CBSEARCH") {
-            int val;
-            cout << "Введите значение для поиска: ";
-            cin >> val;
-            if (SearchCB(root, val)) {
-                cout << "Значение " << val << " найдено." << endl;
+            if (DeleteCB(root, value)) {
+                ofstream outFile("CB.txt", ios::trunc);
+                writeToFileCB(root, outFile);
+                outFile.close();
+                cout << "Значение " << value << " удалено." << endl;
             } else {
-                cout << "Значение " << val << " не найдено." << endl;
+                cout << "Значение " << value << " не найдено." << endl;
+            }
+        } else if (command == "CBSEARCH") {
+            int value;
+            cout << "Введите значение для поиска: ";
+            cin >> value;
+
+            if (SearchCB(root, value)) {
+                cout << "Значение " << value << " найдено." << endl;
+            } else {
+                cout << "Значение " << value << " не найдено." << endl;
             }
         } else if (command == "PRINT") {
             cout << "Дерево:" << endl;
-            PrintTreeCB(root);
+            PrintTreeCB(root); // Вывод дерева в виде "змейки"
         } else if (command == "EXIT") {
             break;
         } else {
@@ -248,18 +257,18 @@ void handleLISTtwoCommands(NodeLT*& head, NodeLT*& tail, const string& filename)
         if (command == "LTADDHEAD") {
             int value;
             cin >> value;
-            addHeadLT(head, tail, value);
+            addHeadLT(head, tail, value);  // Pass both head and tail
             writeToFileLT(head, filename);
         }
         else if (command == "LTADDTAIL") {
             int value;
             cin >> value;
-            addTailLT(head, tail, value);
+            addTailLT(head, tail, value);  // Pass both head and tail
             writeToFileLT(head, filename);
         }
-        else if (command == "LSDELHEAD") {
+        else if (command == "LTDELHEAD") {
             if (head) {
-                deleteHeadLT(head, tail);
+                deleteHeadLT(head, tail);  // Pass both head and tail
                 writeToFileLT(head, filename);
             }
             else {
@@ -268,7 +277,7 @@ void handleLISTtwoCommands(NodeLT*& head, NodeLT*& tail, const string& filename)
         }
         else if (command == "LTDELTAIL") {
             if (tail) {
-                deleteTailLT(head, tail);
+                deleteTailLT(head, tail);  // Pass both head and tail
                 writeToFileLT(head, filename);
             }
             else {
@@ -278,7 +287,7 @@ void handleLISTtwoCommands(NodeLT*& head, NodeLT*& tail, const string& filename)
         else if (command == "LTDELVAL") {
             int value;
             cin >> value;
-            if (deleteByValueLT(head, tail, value)) {
+            if (deleteByValueLT(head, tail, value)) {  // Pass both head and tail
                 writeToFileLT(head, filename);
             }
             else {
@@ -288,7 +297,7 @@ void handleLISTtwoCommands(NodeLT*& head, NodeLT*& tail, const string& filename)
         else if (command == "LTSEARCH") {
             int value;
             cin >> value;
-            if (searchLT(head, value)) {
+            if (searchLT(head, value)) {  // Pass head
                 cout << "Значение найдено." << endl;
             }
             else {
@@ -297,7 +306,7 @@ void handleLISTtwoCommands(NodeLT*& head, NodeLT*& tail, const string& filename)
         }
         else if (command == "LTPRINT") {
             cout << "Список: ";
-            printListLT(head);
+            printListLT(head);  // Pass head
         }
         else if (command == "EXIT") {
             break;
@@ -307,8 +316,6 @@ void handleLISTtwoCommands(NodeLT*& head, NodeLT*& tail, const string& filename)
         }
     }
 }
-
-
 
 void handleSTACKCommands(STACK& stack) {
     string command;
@@ -344,6 +351,11 @@ void handleSTACKCommands(STACK& stack) {
     }
 }
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "QUEUE.h"
+using namespace std;
 void handleQUEUECommands(QUEUE& queue) {
 
     string command;
@@ -388,7 +400,8 @@ int main() {
     CBNode* root = nullptr;
     HASH HASHTable;
     NodeLO* list = nullptr;
-    NodeLT* list2 = nullptr;
+    NodeLT* head = nullptr; // Changed to a head pointer
+    NodeLT* tail = nullptr; // Added a tail pointer
     QUEUE queue;
     STACK stack;
 
@@ -400,7 +413,7 @@ int main() {
         if (command == "ARRAY") {
             handleARRAYCommands(arr); // Передаем массив по ссылке
         }
-        else if (command == "AVL") {
+        else if (command == "CB") {
             handleCBCommands(root);
         }
         else if (command == "HASH") {
@@ -410,7 +423,7 @@ int main() {
             handleListONECommands(list, "LISTONE.txt");
         }
         else if (command == "LT") {
-            handleLISTtwoCommands(list2, "LISTTWO.txt");
+            handleLISTtwoCommands(head, tail, "LISTSEC.txt"); // Pass both head and tail
         }
         else if (command == "QUEUE") {
             handleQUEUECommands(queue);
@@ -431,8 +444,8 @@ int main() {
     clearCB(root);
     HASHTable.clearHASH();
     clearListLO(list);
-    clearListLT(list2);
-    clearQUEUE(queue);
+    clearListLT(head, tail);
+    // clearQUEUE(queue);
     clearSTACK(&stack);
 
     return 0;
