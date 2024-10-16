@@ -1,209 +1,131 @@
-// #include <iostream>
-// #include <fstream>
-
-// using namespace std;
-
-// struct CBNode {
-//     int data;
-//     CBNode* left;
-//     CBNode* right;
-
-//     CBNode(int value) : data(value), left(nullptr), right(nullptr) {}
-// };
-
-// // Вставка узла в полное двоичное дерево
-// void InsertCB(CBNode*& root, int value, int index, int count) {
-//     if (root == nullptr) {
-//         if (index < count) {
-//             root = new CBNode(value);
-//         }
-//         return;
-//     }
-//     InsertCB(root->left, value, 2 * index + 1, count);
-//     InsertCB(root->right, value, 2 * index + 2, count);
-// }
-
-// // Симметричный обход дерева
-// void inorderTraversal(CBNode* node) {
-//     if (node) {
-//         inorderTraversal(node->left);
-//         cout << node->data << " ";
-//         inorderTraversal(node->right);
-//     }
-// }
-
-// // Очистка дерева
-// void deleteTree(CBNode*& node) {
-//     if (node) {
-//         deleteTree(node->left);
-//         deleteTree(node->right);
-//         delete node;
-//         node = nullptr;
-//     }
-// }
-
-// // Запись узлов дерева в файл
-// void writeNodeToFile(CBNode* node, ofstream& file) {
-//     if (!node) return;
-//     writeNodeToFile(node->left, file);
-//     file << node->data << endl; // Записываем значение узла
-//     writeNodeToFile(node->right, file);
-// }
-
-// // Чтение узлов дерева из файла
-// void readFromFile(CBNode*& root, const string& filename) {
-//     ifstream file(filename);
-//     if (!file) {
-//         cout << "Не удалось открыть файл для чтения.\n";
-//         return;
-//     }
-//     int value;
-//     while (file >> value) {
-//         static int count = 0;
-//         InsertCB(root, value, count, count);
-//         count++;
-//     }
-//     file.close();
-// }
-
-// // Запись дерева в файл
-// void writeToFileCB(CBNode* root, const string& filename) {
-//     ofstream file(filename);
-//     if (!file) {
-//         cout << "Не удалось открыть файл для записи.\n";
-//         return;
-//     }
-//     writeNodeToFile(root, file);
-//     file.close();
-// }
-
-// // Поиск элемента в дереве
-// bool SearchCB(CBNode* node, int value) {
-//     if (node == nullptr) {
-//         return false; // Элемент не найден
-//     }
-//     if (node->data == value) {
-//         return true; // Элемент найден
-//     }
-//     // Рекурсивный поиск в левом и правом поддереве
-//     return SearchCB(node->left, value) || SearchCB(node->right, value);
-// }
-// // Вывод дерева
-// // Вывод дерева в виде структуры
-// void PrintTreeCB(CBNode* root, int space = 0) {
-//     if (root == nullptr) return;
-
-//     space += 10;
-
-//     PrintTreeCB(root->right, space);
-
-//     cout << endl;
-//     for (int i = 10; i < space; i++) {
-//         cout << " ";
-//     }
-//     cout << root->data << "\n";
-
-//     PrintTreeCB(root->left, space);
-// }
-
-
-
-
 #include <iostream>
+#include <iomanip>
 #include <fstream>
+#include <cmath>
 
 using namespace std;
 
+
 struct CBNode {
-    int data;
+    int value;
     CBNode* left;
     CBNode* right;
 
-    CBNode(int value) : data(value), left(nullptr), right(nullptr) {}
+    CBNode(int val) : value(val), left(nullptr), right(nullptr) {}
 };
 
-// Вставка узла в полное двоичное дерево
-void InsertCB(CBNode*& root, int value, int index, int count) {
-    if (index < count) {
-        if (root == nullptr) {
-            root = new CBNode(value);
-        } else {
-            InsertCB(root->left, value, 2 * index + 1, count);
-            InsertCB(root->right, value, 2 * index + 2, count);
+
+// Функция для подсчета количества узлов в дереве
+// int countNodes(CBNode* node) {
+//     if (node == nullptr) return 0;
+//     return 1 + countNodes(node->left) + countNodes(node->right);
+// }
+int countNodes(CBNode* root) {
+    if (root == nullptr)
+        return(0);
+    return 1 + countNodes (root->left) + countNodes(root->right);
+}
+
+void InsertCB(CBNode* root, int value) {
+    CBNode* trueRoot = root;
+    int currentDeph = trueRoot->value;
+    if (pow(2, currentDeph) - 1 != countNodes(root)) {
+        while (currentDeph != 2) {
+            if (countNodes(root->left) != pow(2, --currentDeph) - 1) {
+                root = root->left;
+            }
+            else {
+                root = root->right;
+            }
         }
+        if (root->left == NULL) {
+            root->left = new CBNode(value);
+        }
+        else {
+            root->right = new CBNode(value);
+        }
+    }
+    else {
+        currentDeph = trueRoot->value;
+        while (currentDeph |= 1){
+            root = root->left; 
+            currentDeph--;
+        }
+        root->left = new CBNode(value);
+        trueRoot->value++;
     }
 }
 
-// Запись узлов дерева в файл
-void writeNodeToFile(CBNode* node, ofstream& file) {
+// Вставка узла в полное двоичное дерево
+// void InsertCB(CBNode*& root, int value) {
+//     if (root == nullptr) {
+//         root = new CBNode(value);
+//         return;
+//     }
+
+//     // Используем рекурсивную вставку
+//     if (countNodes(root->left) <= countNodes(root->right)) {
+//         InsertCB(root->left, value);
+//     } else {
+//         InsertCB(root->right, value);
+//     }
+// }
+
+// Запись узлов в файл с отступами
+void writeNodeToFile(CBNode* node, ofstream& file, int depth) {
     if (!node) return;
-    file << node->data << endl; // Записываем значение узла
-    writeNodeToFile(node->left, file);
-    writeNodeToFile(node->right, file);
+
+    writeNodeToFile(node->left, file, depth + 1);
+    
+    file << setw(depth * 4) << "";
+    file << node->value << endl;
+
+    writeNodeToFile(node->right, file, depth + 1);
 }
 
-// Запись дерева в файл
+// Запись всего дерева в файл
 void writeToFileCB(CBNode* root, const string& filename) {
     ofstream file(filename);
     if (!file) {
         cout << "Не удалось открыть файл для записи.\n";
         return;
     }
-    writeNodeToFile(root, file);
-    file.close();
-}
 
-// Чтение узлов дерева из файла
-void readFromFile(CBNode*& root, const string& filename) {
-    ifstream file(filename);
-    if (!file) {
-        cout << "Не удалось открыть файл для чтения.\n";
-        return;
-    }
-    int value;
-    static int count = 0; // Переменная для отслеживания количества узлов
-    while (file >> value) {
-        InsertCB(root, value, count, count + 1); // Вставка узлов
-        count++;
+    if (!root) {
+        file << "Дерево пусто." << endl;
+    } else {
+        writeNodeToFile(root, file, 0);
     }
     file.close();
 }
 
 // Поиск элемента в дереве
-bool SearchCB(CBNode* node, int value) {
+bool SearchCB(CBNode* node, int val) {
     if (node == nullptr) {
-        return false; // Элемент не найден
+        return false;
     }
-    if (node->data == value) {
-        return true; // Элемент найден
+    if (node-> value == val) {
+        return true;
     }
-    // Рекурсивный поиск в левом и правом поддереве
-    return SearchCB(node->left, value) || SearchCB(node->right, value);
+    return SearchCB(node->left, val) || SearchCB(node->right, val);
 }
 
-// Вывод дерева в виде структуры
+// Функция для вывода дерева
 void PrintTreeCB(CBNode* root, int space = 0) {
-    if (root == nullptr) return;
+    if (!root) return;
 
-    space += 10;
+    // Увеличиваем отступ для следующего уровня
+    space += 4;
 
-    PrintTreeCB(root->right, space);
+    // Выводим правое поддерево
+    PrintTreeCB (root->right, space);
 
-    cout << endl;
-    for (int i = 10; i < space; i++) {
-        cout << " ";
-    }
-    cout << root->data << "\n";
+    // Выводим текущий узел с отступами
+    cout<<endl;
+    for (int i = 4; i < space; i++)
+        cout <<" ";
+    cout <<root->value<< "\n";
 
-    PrintTreeCB(root->left, space);
-}
-
-// Очистка дерева
-void deleteTree(CBNode*& node) {
-    if (node) {
-        deleteTree(node->left);
-        deleteTree(node->right);
-        delete node;
-        node = nullptr;
-    }
+    // Выводим левое поддерево
+    PrintTreeCB (root->left, space);
 }

@@ -1,19 +1,19 @@
-#pragma once
 #include <iostream>
+#include <fstream>
+
 using namespace std;
 
 struct CBNode {
-    int data;
-    CBNode* left = nullptr;
-    CBNode* right = nullptr;
-    int balance = 0;
+    int value;
+    CBNode* left;
+    CBNode* right;
+
+    CBNode(int val) : value(val), left(nullptr), right(nullptr) {}
 };
 
-
-void InsertCB(CBNode*& root, int value, int index, int count);
+// Функции для работы с полным двоичным деревом
+void InsertCB(CBNode* root, int value);
+void writeToFileCB(CBNode* root, const string& filename);
+void writeNodeToFile(CBNode* node, ofstream& file, int depth);
 bool SearchCB(CBNode* node, int value);
 void PrintTreeCB(CBNode* root, int space = 0);
-void writeNodeToFile(CBNode* node, ofstream& file);
-void writeToFileCB(CBNode* root, const string& filename);
-void readFromFile(CBNode*& root, const string& filename);
-void deleteTree(CBNode*& node);

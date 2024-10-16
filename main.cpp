@@ -9,8 +9,7 @@
 #include "LISTtwo.h"
 #include "QUEUE.h"
 #include "STACK.h"
-// #include <unistd.h> // Для getcwd (Unix)
-#include <direct.h> // Для _getcwd (Windows)
+
 
 using namespace std;
 
@@ -75,58 +74,47 @@ void handleArrayCommands(ArrayNode*& arr) {
     }
 }
 
+// Обработчик команд для дерева
 void handleCBCommands(CBNode*& root) {
     string command;
-    int count = 0; // Для отслеживания количества узлов
 
     while (true) {
         cout << ">> ";
         cin >> command;
 
         if (command == "CBINSERT") {
-            int value;
+            int val;
             cout << "Введите значение: ";
-            cin >> value;
+            cin >> val;
 
-            // Вставка узла и увеличение счетчика
-            InsertCB(root, value, count, count + 1);
-            count++;
+            // Вставка узла
+            InsertCB(root, val);
 
             // Запись дерева в файл
-            ofstream file("CB.txt");
-            if (!file) {
-                cout << "Не удалось открыть файл для записи.\n";
-                return;
-            }
-            writeNodeToFile(root, file);
-            file.close();
+            writeToFileCB(root, "CB.txt");
 
-            cout << "Значение " << value << " вставлено." << endl;
-        }
-        
-        else if (command == "CBSEARCH") {
-            int value;
+            cout << "Значение " << val << " вставлено." << endl;
+        } else if (command == "CBSEARCH") {
+            int val;
             cout << "Введите значение для поиска: ";
-            cin >> value;
-            if (SearchCB(root, value)) {
-                cout << "Значение " << value << " найдено." << endl;
+            cin >> val;
+            if (SearchCB(root, val)) {
+                cout << "Значение " << val << " найдено." << endl;
+            } else {
+                cout << "Значение " << val << " не найдено." << endl;
             }
-            else {
-                cout << "Значение " << value << " не найдено." << endl;
-            }
-        }
-        else if (command == "PRINT") {
+        } else if (command == "PRINT") {
             cout << "Дерево:" << endl;
             PrintTreeCB(root);
-        }
-        else if (command == "EXIT") {
+        } else if (command == "EXIT") {
             break;
-        }
-        else {
+        } else {
             cout << "Неизвестная команда.\n";
         }
     }
 }
+
+
 
 
 void handleHashCommands(Hash& hashTable) {
