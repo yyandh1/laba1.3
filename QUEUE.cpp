@@ -8,15 +8,15 @@ struct NodeQ {
     NodeQ* next;
 };
 
-struct Queue {
+struct QUEUE {
     NodeQ* head;
     NodeQ* tail;
 
-    Queue() : head(nullptr), tail(nullptr) {}
+    QUEUE() : head(nullptr), tail(nullptr) {}
 };
 
 // Добавление элемента в очередь (push)
-void pushQ(Queue& queue, int value) {
+void pushQUEUE(QUEUE& queue, int value) {
     NodeQ* newNodeQ = new NodeQ;
     newNodeQ->data = value;
     newNodeQ->next = nullptr;
@@ -31,7 +31,7 @@ void pushQ(Queue& queue, int value) {
 }
 
 // Удаление элемента из очереди (pop)
-int popQ(Queue& queue) {
+int popQUEUE(QUEUE& queue) {
     if (!queue.head) {
         cout << "Очередь пуста!" << endl;
         return -1; // Возвращаем -1, если очередь пуста
@@ -50,7 +50,7 @@ int popQ(Queue& queue) {
 }
 
 // Чтение (вывод всех элементов очереди)
-void printQueue(const Queue& queue) {
+void printQUEUE(const QUEUE& queue) {
     NodeQ* current = queue.head;
     while (current) {
         cout << current->data << " ";
@@ -60,14 +60,14 @@ void printQueue(const Queue& queue) {
 }
 
 // Освобождение памяти
-void clearQueue(Queue& queue) {
+void clearQUEUE(QUEUE& queue) {
     while (queue.head) {
-        popQ(queue);
+        popQUEUE(queue);
     }
 }
 
 // Функция для записи очереди в файл
-void writeToFileQ(const Queue& queue, const string& filename) {
+void writeToFileQUEUE(const QUEUE& queue, const string& filename) {
     ofstream file(filename);
     if (!file) {
         cout << "Не удалось открыть файл для записи.\n";
@@ -83,19 +83,19 @@ void writeToFileQ(const Queue& queue, const string& filename) {
 
 
 // Функция для чтения очереди из файла (не используется в вашем коде, но оставлю для возможного использования)
-void readFromFileQ(Queue& queue, const string& filename) {
+void readFromFileQUEUE(QUEUE& queue, const string& filename) {
     ifstream file(filename);
     if (!file) {
         cout << "Не удалось открыть файл для чтения.\n";
         return;
     }
 
-    clearQueue(queue); // Очищаем очередь перед загрузкой новых данных
+    clearQUEUE(queue); // Очищаем очередь перед загрузкой новых данных
 
     int value;
     int count = 0;  // Счетчик прочитанных значений
     while (file >> value) {
-        pushQ(queue, value); // Используем push для добавления значений
+        pushQUEUE(queue, value); // Используем push для добавления значений
         count++;
     }
     if (count > 0) {

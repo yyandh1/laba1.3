@@ -10,69 +10,79 @@
 #include "QUEUE.h"
 #include "STACK.h"
 
-
-using namespace std;
-
-void handleArrayCommands(ArrayNode*& arr) {
-
+void handleARRAYCommands(ARRAY& arr) {
     string command;
     while (true) {
         cout << ">> ";
         cin >> command;
 
-        if (command == "APPEND") {
+        // Приводим команду к нижнему регистру
+        for (auto &c : command) c = tolower(c);
+
+        if (command == "append") {
             int value;
             cin >> value;
-            if (!containsArray(arr, value)) {
-                appendArray(arr, value);
-                writeToFileArray(arr, "ARRAY.txt");
+
+            bool exists = false;
+            for (int i = 0; i < arr.size; ++i) {
+                if (arr.data[i] == value) {
+                    exists = true;
+                    break;
+                }
             }
-        }
-        else if (command == "AINSERT") {
+            if (!exists) {
+                ARRAYappend(arr, value);
+                writeToFileARRAY(arr, "ARRAY.txt");
+            } else {
+                cout << "Значение уже существует." << endl;
+            }
+        } else if (command == "ainsert") {
             int index, value;
             cin >> index >> value;
-            if (index >= 0 && index <= sizeArray(arr)) {
-                insertArray(arr, index, value);  // Исправлено на insertArray
-                writeToFileArray(arr, "ARRAY.txt");
+            if (index >= 0 && index <= ARRAYlength(arr)) {
+                ARRAYinsert(arr, index, value);
+                writeToFileARRAY(arr, "ARRAY.txt");
+            } else {
+                cout << "Индекс вне диапазона." << endl;
             }
-        }
-        else if (command == "AGET") {
+        } else if (command == "aget") {
             int index;
             cin >> index;
-            if (index >= 0 && index < sizeArray(arr)) {
-                cout << "Элемент по индексу " << index << ": " << getArray(arr, index) << endl;
+            if (index >= 0 && index < ARRAYlength(arr)) {
+                cout << "Элемент по индексу " << index << ": " << ARRAYget(arr, index) << endl;
+            } else {
+                cout << "Индекс вне диапазона." << endl;
             }
-        }
-        else if (command == "AREMOVE") {
+        } else if (command == "aremov") {
             int index;
             cin >> index;
-            if (index >= 0 && index < sizeArray(arr)) {
-                removeArray(arr, index);
-                writeToFileArray(arr, "ARRAY.txt");
+            if (index >= 0 && index < ARRAYlength(arr)) {
+                ARRAYremove(arr, index);
+                writeToFileARRAY(arr, "ARRAY.txt");
+            } else {
+                cout << "Индекс вне диапазона." << endl;
             }
-        }
-        else if (command == "AREPLACE") {
+        } else if (command == "areplace") {
             int index, value;
             cin >> index >> value;
-            if (index >= 0 && index < sizeArray(arr)) {
-                replaceArray(arr, index, value);
-                writeToFileArray(arr, "ARRAY.txt");
+            if (index >= 0 && index < ARRAYlength(arr)) {
+                ARRAYreplace(arr, index, value);
+                writeToFileARRAY(arr, "ARRAY.txt");
+            } else {
+                cout << "Индекс вне диапазона." << endl;
             }
-        }
-        else if (command == "ASIZE") {
-            cout << "Длина списка: " << sizeArray(arr) << endl;
-        }
-        else if (command == "PRINT") {
-            printArray(arr);
-        }
-        else if (command == "EXIT") {
+        } else if (command == "asize") {
+            cout << "Длина массива: " << ARRAYlength(arr) << endl;
+        } else if (command == "print") {
+            printARRAY(arr);
+        } else if (command == "exit") {
             break;
-        }
-        else {
-            cout << "Неизвестная команда.\n";
+        } else {
+            cout << "Неизвестная команда." << endl;
         }
     }
 }
+
 
 // Обработчик команд для дерева
 void handleCBCommands(CBNode*& root) {
@@ -114,10 +124,7 @@ void handleCBCommands(CBNode*& root) {
     }
 }
 
-
-
-
-void handleHashCommands(Hash& hashTable) {
+void handleHASHCommands(HASH& HASHTable) {
 
     string command;
     while (true) {
@@ -129,14 +136,14 @@ void handleHashCommands(Hash& hashTable) {
 
             cin >> key;
             cin >> value;
-            hashTable.insertH(key, value);
-            hashTable.writeToFileH("Hash.txt");
+            HASHTable.insertHASH(key, value);
+            HASHTable.writeToFileHASH("HASH.txt");
         }
         else if (command == "HGET") {
             string key;
 
             cin >> key;
-            string result = hashTable.getH(key);
+            string result = HASHTable.getHASH(key);
             if (!result.empty()) {
                 cout << "Значение: " << result << endl;
             }
@@ -147,12 +154,12 @@ void handleHashCommands(Hash& hashTable) {
         else if (command == "HREMOVE") {
             string key;
             cin >> key;
-            hashTable.removeH(key);
-            hashTable.writeToFileH("Hash.txt");
+            HASHTable.removeHASH(key);
+            HASHTable.writeToFileHASH("HASH.txt");
         }
         else if (command == "HPRINT") {
             cout << "Хеш-таблица:" << endl;
-            hashTable.printTableH();
+            HASHTable.printTableHASH();
         }
         else if (command == "EXIT") {
             break;
@@ -232,65 +239,65 @@ void handleListONECommands(NodeLO*& list, const string& filename) {
     }
 }
 
-void handleListSECCommands(NodeLS*& list2, const string& filename) {
+void handleLISTtwoCommands(NodeLT*& head, NodeLT*& tail, const string& filename) {
     string command;
     while (true) {
         cout << ">> ";
         cin >> command;
 
-        if (command == "LSADDHEAD") {
+        if (command == "LTADDHEAD") {
             int value;
             cin >> value;
-            addHeadLS(list2, value);
-            writeToFileLS(list2, filename);
+            addHeadLT(head, tail, value);
+            writeToFileLT(head, filename);
         }
-        else if (command == "LSADDTAIL") {
+        else if (command == "LTADDTAIL") {
             int value;
             cin >> value;
-            addTailLS(list2, value);
-            writeToFileLS(list2, filename);
+            addTailLT(head, tail, value);
+            writeToFileLT(head, filename);
         }
         else if (command == "LSDELHEAD") {
-            if (list2) {
-                deleteHeadLS(list2);
-                writeToFileLS(list2, filename);
+            if (head) {
+                deleteHeadLT(head, tail);
+                writeToFileLT(head, filename);
             }
             else {
                 cout << "Список пуст." << endl;
             }
         }
-        else if (command == "LSDELTAIL") {
-            if (list2) {
-                deleteTailLS(list2);
-                writeToFileLS(list2, filename);
+        else if (command == "LTDELTAIL") {
+            if (tail) {
+                deleteTailLT(head, tail);
+                writeToFileLT(head, filename);
             }
             else {
                 cout << "Список пуст." << endl;
             }
         }
-        else if (command == "LSDELVAL") {
+        else if (command == "LTDELVAL") {
             int value;
             cin >> value;
-            if (deleteByValueLS(list2, value)) {
-                writeToFileLS(list2, filename);
+            if (deleteByValueLT(head, tail, value)) {
+                writeToFileLT(head, filename);
             }
             else {
                 cout << "Значение не найдено." << endl;
             }
         }
-        else if (command == "LSSEARCH") {
+        else if (command == "LTSEARCH") {
             int value;
             cin >> value;
-            if (searchLS(list2, value)) {
+            if (searchLT(head, value)) {
                 cout << "Значение найдено." << endl;
             }
             else {
                 cout << "Значение не найдено." << endl;
             }
         }
-        else if (command == "LSPRINT") {
+        else if (command == "LTPRINT") {
             cout << "Список: ";
-            printListLS(list2);
+            printListLT(head);
         }
         else if (command == "EXIT") {
             break;
@@ -302,7 +309,8 @@ void handleListSECCommands(NodeLS*& list2, const string& filename) {
 }
 
 
-void handleStackCommands(Stack& stack) {
+
+void handleSTACKCommands(STACK& stack) {
     string command;
     while (true) {
         cout << ">> ";
@@ -311,13 +319,13 @@ void handleStackCommands(Stack& stack) {
         if (command == "SPUSH") {
             string value;
             cin >> value;
-            pushS(&stack, value);
-            writeToFileS(stack, "STACK.txt");
+            pushSTACK(&stack, value);
+            writeToFileSTACK(stack, "STACK.txt");
         }
         else if (command == "SPOP") {
-            string value = popS(&stack);
+            string value = popSTACK(&stack);
             if (!value.empty()) {
-                writeToFileS(stack, "STACK.txt");
+                writeToFileSTACK(stack, "STACK.txt");
             }
             else {
                 cout << "Стек пуст." << endl;
@@ -325,7 +333,7 @@ void handleStackCommands(Stack& stack) {
         }
         else if (command == "SPRINT") {
             cout << "Стек: ";
-            printStackS(&stack);
+            printSTACK(&stack);
         }
         else if (command == "EXIT") {
             break;
@@ -336,7 +344,7 @@ void handleStackCommands(Stack& stack) {
     }
 }
 
-void handleQueueCommands(Queue& queue) {
+void handleQUEUECommands(QUEUE& queue) {
 
     string command;
     while (true) {
@@ -346,13 +354,13 @@ void handleQueueCommands(Queue& queue) {
         if (command == "QPUSH") {
             int value;
             cin >> value;
-            pushQ(queue, value);
-            writeToFileQ(queue, "QUEUE.txt");
+            pushQUEUE(queue, value);
+            writeToFileQUEUE(queue, "QUEUE.txt");
         }
         else if (command == "QPOP") {
-            int value = popQ(queue);
+            int value = popQUEUE(queue);
             if (value != -1) {
-                writeToFileQ(queue, "QUEUE.txt");
+                writeToFileQUEUE(queue, "QUEUE.txt");
             }
             else {
                 cout << "Очередь пуста." << endl;
@@ -360,7 +368,7 @@ void handleQueueCommands(Queue& queue) {
         }
         else if (command == "QPRINT") {
             cout << "Очередь: ";
-            printQueue(queue);
+            printQUEUE(queue);
         }
         else if (command == "EXIT") {
             break;
@@ -371,15 +379,18 @@ void handleQueueCommands(Queue& queue) {
     }
 }
 
+
 int main() {
     system("chcp 65001");
-    ArrayNode* arr = nullptr;
+
+   ARRAY arr; // Теперь используем структуру Array вместо указателя
+    ARRAYinit(arr, 10); // Инициализация массива с начальной емкостью 10
     CBNode* root = nullptr;
-    Hash hashTable;
+    HASH HASHTable;
     NodeLO* list = nullptr;
-    NodeLS* list2 = nullptr;
-    Queue queue;
-    Stack stack;
+    NodeLT* list2 = nullptr;
+    QUEUE queue;
+    STACK stack;
 
     while (true) {
         string command;
@@ -387,26 +398,25 @@ int main() {
         cin >> command;
 
         if (command == "ARRAY") {
-            handleArrayCommands(arr);
+            handleARRAYCommands(arr); // Передаем массив по ссылке
         }
-        else if (command == "CB") {
+        else if (command == "AVL") {
             handleCBCommands(root);
-
         }
         else if (command == "HASH") {
-            handleHashCommands(hashTable);
+            handleHASHCommands(HASHTable);
         }
         else if (command == "LO") {
             handleListONECommands(list, "LISTONE.txt");
         }
-        else if (command == "LS") {
-            handleListSECCommands(list2, "LISTSEC.txt");
+        else if (command == "LT") {
+            handleLISTtwoCommands(list2, "LISTTWO.txt");
         }
         else if (command == "QUEUE") {
-            handleQueueCommands(queue);
+            handleQUEUECommands(queue);
         }
         else if (command == "STACK") {
-            handleStackCommands(stack);
+            handleSTACKCommands(stack);
         }
         else if (command == "EXIT") {
             break;
@@ -417,13 +427,13 @@ int main() {
     }
 
     // Очистка памяти
-    clearArray(arr);
-
-    hashTable.clearH();
+    ARRAYdestroy(arr); // Освобождаем память массива
+    clearCB(root);
+    HASHTable.clearHASH();
     clearListLO(list);
-    clearListLS(list2);
-    clearQueue(queue);
-    clearStack(&stack);
+    clearListLT(list2);
+    clearQUEUE(queue);
+    clearSTACK(&stack);
 
     return 0;
 }

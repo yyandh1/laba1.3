@@ -7,16 +7,16 @@ struct NodeQ {
     NodeQ* next;
 };
 
-struct Queue {
+struct QUEUE {
     NodeQ* head;
     NodeQ* tail;
 
-    Queue() : head(nullptr), tail(nullptr) {}
+    QUEUE() : head(nullptr), tail(nullptr) {}
 };
 
-void pushQ(Queue& queue, int value);
-int popQ(Queue& queue);
-void printQueue(const Queue& queue);
-void clearQueue(Queue& queue) ;
-void writeToFileQ(const Queue& queue, const string& filename);
-void readFromFileQ(Queue& queue, const string& filename);
+void pushQUEUE(QUEUE& queue, int value);
+int popQUEUE(QUEUE& queue);
+void printQUEUE(const QUEUE& queue);
+void clearQUEUE(QUEUE& queue) ;
+void writeToFileQUEUE(const QUEUE& queue, const string& filename);
+void readFromFileQUEUE(QUEUE& queue, const string& filename);

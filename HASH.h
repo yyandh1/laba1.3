@@ -11,20 +11,20 @@ struct Node {
     Node* next;
 };
 
-class Hash {
+class HASH {
 public:
     static const int tableSize = 10;
     Node* table[tableSize];
 
-    Hash();
-    void insertH(const string& key, const string& value);
-    string getH(const string& key);
-    void removeH(const string& key);
-    void printTableH();
-    void writeToFileH(const string& filename);
-    void readFromFileH(const string& filename);
-    void clearH();
+    HASH();
+    void insertHASH(const string& key, const string& value);
+    string getHASH(const string& key);
+    void removeHASH(const string& key);
+    void printTableHASH();
+    void writeToFileHASH(const string& filename);
+    void readFromFileHASH(const string& filename);
+    void clearHASH();
 
 private:
-    int hashFunction(const string& key); // Объявление хеш-функции
+    int HASHFunction(const string& key); // Объявление хеш-функции
 };

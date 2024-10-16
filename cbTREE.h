@@ -17,3 +17,4 @@ void writeToFileCB(CBNode* root, const string& filename);
 void writeNodeToFile(CBNode* node, ofstream& file, int depth);
 bool SearchCB(CBNode* node, int value);
 void PrintTreeCB(CBNode* root, int space = 0);
+void clearCB(CBNode*& root);

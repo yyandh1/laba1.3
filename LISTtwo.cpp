@@ -3,104 +3,107 @@
 #include <string>
 using namespace std;
 
-struct NodeLS {
+struct NodeLT {
     int data;
-    NodeLS* next;
-    NodeLS* previous;
+    NodeLT* next;
+    NodeLT* previous;
 };
 
 // Добавление элемента в голову списка
-void addHeadLS(NodeLS*& head, int value) {
-    NodeLS* newNodeLS = new NodeLS;
-    newNodeLS->data = value;
-    newNodeLS->next = head;
-    newNodeLS->previous = nullptr;
+// Добавление элемента в голову списка
+void addHeadLT(NodeLT*& head, NodeLT*& tail, int value) {
+    NodeLT* newNodeLT = new NodeLT;
+    newNodeLT->data = value;
+    newNodeLT->next = head;
+    newNodeLT->previous = nullptr;
 
     if (head) {
-        head->previous = newNodeLS;
+        head->previous = newNodeLT;
+    } else {
+        tail = newNodeLT; // Если список был пуст, новый узел становится хвостом
     }
-    head = newNodeLS;
+    head = newNodeLT;
 }
 
 // Добавление элемента в хвост списка
-void addTailLS(NodeLS*& head, int value) {
-    NodeLS* newNodeLS = new NodeLS;
-    newNodeLS->data = value;
-    newNodeLS->next = nullptr;
+void addTailLT(NodeLT*& head, NodeLT*& tail, int value) {
+    NodeLT* newNodeLT = new NodeLT;
+    newNodeLT->data = value;
+    newNodeLT->next = nullptr;
 
     if (!head) {
-        newNodeLS->previous = nullptr;
-        head = newNodeLS;
+        newNodeLT->previous = nullptr;
+        head = newNodeLT;
+        tail = newNodeLT; // Если список пуст, новый узел становится и головой, и хвостом
     } else {
-        NodeLS* temp = head;
-        while (temp->next) {
-            temp = temp->next;
-        }
-        temp->next = newNodeLS;
-        newNodeLS->previous = temp;
+        newNodeLT->previous = tail;
+        tail->next = newNodeLT;
+        tail = newNodeLT; // Обновляем хвост
     }
 }
 
 // Удаление элемента с головы списка
-void deleteHeadLS(NodeLS*& head) {
+void deleteHeadLT(NodeLT*& head, NodeLT*& tail) {
     if (!head) return;
-    NodeLS* temp = head;
+    NodeLT* temp = head;
     head = head->next;
     if (head) {
         head->previous = nullptr;
+    } else {
+        tail = nullptr; // Если список стал пустым, обнуляем хвост
     }
     delete temp;
 }
 
 // Удаление элемента с хвоста списка
-void deleteTailLS(NodeLS*& head) {
-    if (!head) return;
-    if (!head->next) {
-        delete head;
+void deleteTailLT(NodeLT*& head, NodeLT*& tail) {
+    if (!tail) return;
+    if (head == tail) {
+        delete head; // Если один элемент в списке
         head = nullptr;
+        tail = nullptr;
         return;
     }
-    NodeLS* temp = head;
-    while (temp->next) {
-        temp = temp->next;
-    }
-    temp->previous->next = nullptr;
+    NodeLT* temp = tail;
+    tail = tail->previous;
+    tail->next = nullptr;
     delete temp;
 }
 
 // Удаление элемента по значению
-bool deleteByValueLS(NodeLS*& head, int value) {
-    if (!head) return false;  // Если список пуст, возвращаем false
+bool deleteByValueLT(NodeLT*& head, NodeLT*& tail, int value) {
+    if (!head) return false;
 
     if (head->data == value) {
-        deleteHeadLS(head);
-        return true;  // Если удаляем голову, возвращаем true
+        deleteHeadLT(head, tail);
+        return true;
     }
 
-    NodeLS* current = head;
+    NodeLT* current = head;
     while (current && current->data != value) {
         current = current->next;
     }
 
     if (current) {
-        // Обновляем ссылки на соседние узлы
         if (current->next) {
             current->next->previous = current->previous;
+        } else {
+            tail = current->previous; // Обновляем хвост, если удаляем последний элемент
         }
         if (current->previous) {
             current->previous->next = current->next;
         }
-        delete current;  // Удаляем узел
-        return true;  // Возвращаем true, если значение найдено и удалено
+        delete current;
+        return true;
     }
 
-    return false;  // Если значение не найдено, возвращаем false
+    return false;
 }
 
 
 // Поиск элемента по значению
-NodeLS* searchLS(NodeLS* head, int value) {
-    NodeLS* current = head;
+NodeLT* searchLS(NodeLT* head, int value) {
+    NodeLT* current = head;
     while (current) {
         if (current->data == value) {
             return current;
@@ -111,7 +114,7 @@ NodeLS* searchLS(NodeLS* head, int value) {
 }
 
 // Печать списка
-void printListLS(NodeLS* head) {
+void printListLT(NodeLT* head) {
     while (head) {
         cout << head->data << " ";
         head = head->next;
@@ -120,20 +123,20 @@ void printListLS(NodeLS* head) {
 }
 
 // Освобождение памяти
-void clearListLS(NodeLS*& head) {
+void clearListLT(NodeLT*& head, NodeLT*& tail) {
     while (head) {
-        deleteHeadLS(head);
+        deleteHeadLT(head, tail);
     }
 }
 
 // Функция для записи списка в файл
-void writeToFileLS(NodeLS* head, const string& filename) {
+void writeToFileLT(NodeLT* head, const string& filename) {
     ofstream file(filename);
     if (!file) {
         cout << "Не удалось открыть файл для записи.\n";
         return;
     }
-    NodeLS* temp = head;
+    NodeLT* temp = head;
     while (temp) {
         file << temp->data << endl;
         temp = temp->next;
@@ -142,25 +145,24 @@ void writeToFileLS(NodeLS* head, const string& filename) {
 }
 
 // Функция для чтения списка из файла
-void readFromFileLS(NodeLS*& head, const string& filename) {
+void readFromFileLT(NodeLT*& head, NodeLT*& tail, const string& filename) {
     ifstream file(filename);
     if (!file) {
         cout << "Не удалось открыть файл для чтения.\n";
         return;
     }
 
-    clearListLS(head); // Очищаем список перед загрузкой новых данных
+    clearListLT(head, tail); // Очищаем список перед загрузкой новых данных
 
     int value;
-    int count = 0;  // Счетчик прочитанных значений
+    int count = 0;
     while (file >> value) {
-        addTailLS(head, value);
+        addTailLT(head, tail, value);
         count++;
     }
     if (count > 0) {
-        cout << count;
-    }
-    else {
+        cout << count << " элементов загружено из файла.\n";
+    } else {
         cout << "Файл пуст или данные неверны.\n";
     }
     file.close();

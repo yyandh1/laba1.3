@@ -1,20 +1,21 @@
-#pragma once
+#include <iostream>
+#include <fstream>
 #include <string>
-using namespace std;
 
-struct NodeLS {
+struct NodeLT {
     int data;
-    NodeLS* next;
-    NodeLS* previous;
+    NodeLT* next;
+    NodeLT* previous;
 };
 
-void addHeadLS(NodeLS*& head, int value);
-void addTailLS(NodeLS*& head, int value);
-void deleteHeadLS(NodeLS*& head);
-void deleteTailLS(NodeLS*& head);
-bool deleteByValueLS(NodeLS*& head, int value);
-NodeLS* searchLS(NodeLS* head, int value) ;
-void printListLS(NodeLS* head) ;
-void clearListLS(NodeLS*& head) ;
-void writeToFileLS(NodeLS* head, const string& filename);
-void readFromFileLS(NodeLS*& head, const string& filename);
+// Функции для работы с двусвязным списком
+void addHeadLT(NodeLT*& head, NodeLT*& tail, int value);
+void addTailLT(NodeLT*& head, NodeLT*& tail, int value);
+void deleteHeadLT(NodeLT*& head, NodeLT*& tail);
+void deleteTailLT(NodeLT*& head, NodeLT*& tail);
+bool deleteByValueLT(NodeLT*& head, NodeLT*& tail, int value);
+NodeLT* searchLT(NodeLT* head, int value);
+void printListLT(NodeLT* head);
+void clearListLT(NodeLT*& head, NodeLT*& tail);
+void writeToFileLT(NodeLT* head, const std::string& filename);
+void readFromFileLT(NodeLT*& head, NodeLT*& tail, const std::string& filename);

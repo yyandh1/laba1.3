@@ -129,3 +129,17 @@ void PrintTreeCB(CBNode* root, int space = 0) {
     // Выводим левое поддерево
     PrintTreeCB (root->left, space);
 }
+
+// Функция для очистки дерева и освобождения памяти
+void clearCB(CBNode*& root) {
+    if (root == nullptr) return;
+
+    // Рекурсивно очищаем левое и правое поддеревья
+    clearCB(root->left);
+    clearCB(root->right);
+
+    // Освобождаем память текущего узла
+    delete root;
+    root = nullptr; // Устанавливаем указатель в nullptr
+}
+

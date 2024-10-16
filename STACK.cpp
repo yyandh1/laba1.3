@@ -9,20 +9,20 @@ struct NodeS {
     NodeS* next;
 };
 
-struct Stack {
+struct STACK {
     NodeS* head = nullptr;
 
 };
 
 // Добавление элемента в стек (push)
-void pushS(Stack* stack, const string& data) {
+void pushSTACK(STACK* stack, const string& data) {
     NodeS* new_NodeS = new NodeS{data, nullptr};
     new_NodeS->next = stack->head;
     stack->head = new_NodeS;
 }
 
 // Удаление элемента из стека (pop)
-string popS(Stack* stack) {
+string popSTACK(STACK* stack) {
     if (stack->head == nullptr) {
         cout << "Стек пуст!" << endl;
         return ""; // Возвращаем пустую строку, если стек пуст
@@ -36,7 +36,7 @@ string popS(Stack* stack) {
 }
 
 // Функция для вывода всех элементов стека
-void printStackS(Stack* stack) {
+void printSTACK(STACK* stack) {
     if (stack->head == nullptr) {
         cout << "Стек пуст!" << endl;
         return;
@@ -54,14 +54,14 @@ void printStackS(Stack* stack) {
 }
 
 // Освобождение памяти стека
-void clearStack(Stack* stack) {
+void clearSTACK(STACK* stack) {
     while (stack->head) {
-        popS(stack);
+        popSTACK(stack);
     }
 }
 
 // Функция для записи стека в файл
-void writeToFileS(const Stack& stack, const string& filename) {
+void writeToFileSTACK(const STACK& stack, const string& filename) {
     ofstream file(filename);
     if (!file) {
         cout << "Не удалось открыть файл для записи.\n";

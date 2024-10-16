@@ -7,13 +7,13 @@ struct NodeS {
     NodeS* next;
 };
 
-struct Stack {
+struct STACK {
     NodeS* head = nullptr;
 
 };
 
-void pushS(Stack* stack, const string& data);
-string popS(Stack* stack);
-void printStackS(Stack* stack);
-void clearStack(Stack* stack);
-void writeToFileS(const Stack& stack, const string& filename);
+void pushSTACK(STACK* stack, const string& data);
+string popSTACK(STACK* stack);
+void printSTACK(STACK* stack);
+void clearSTACK(STACK* stack);
+void writeToFileSTACK(const STACK& stack, const string& filename);

@@ -1,17 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include "Hash.h"
+#include "HASH.h"
 
 // Конструктор
-Hash::Hash() {
+HASH::HASH() {
     for (int i = 0; i < tableSize; i++) {
         table[i] = nullptr; // Инициализируем массив нулями
     }
 }
 
 // Хеш-функция
-int Hash::hashFunction(const string& key) {
+int HASH::HASHFunction(const string& key) {
     int hash = 0;
     for (char ch : key) {
         hash += ch; // Суммируем ASCII значения символов
@@ -20,8 +20,8 @@ int Hash::hashFunction(const string& key) {
 }
 
 // Добавление элемента
-void Hash::insertH(const string& key, const string& value) {
-    int index = hashFunction(key);
+void HASH::insertHASH(const string& key, const string& value) {
+    int index = HASHFunction(key);
     Node* newNode = new Node{key, value, nullptr};
 
     if (!table[index]) {
@@ -44,8 +44,8 @@ void Hash::insertH(const string& key, const string& value) {
 }
 
 // Получение значения по ключу
-string Hash::getH(const string& key) {
-    int index = hashFunction(key);
+string HASH::getHASH(const string& key) {
+    int index = HASHFunction(key);
     Node* current = table[index];
     while (current) {
         if (current->key == key) {
@@ -57,8 +57,8 @@ string Hash::getH(const string& key) {
 }
 
 // Удаление элемента по ключу
-void Hash::removeH(const string& key) {
-    int index = hashFunction(key);
+void HASH::removeHASH(const string& key) {
+    int index = HASHFunction(key);
     Node* current = table[index];
     Node* previous = nullptr;
 
@@ -79,7 +79,7 @@ void Hash::removeH(const string& key) {
 }
 
 // Вывод всех элементов хеш-таблицы
-void Hash::printTableH() {
+void HASH::printTableHASH() {
     for (int i = 0; i < tableSize; i++) {
         if (table[i]) {
             Node* current = table[i];
@@ -93,7 +93,7 @@ void Hash::printTableH() {
 }
 
 // Запись хеш-таблицы в файл
-void Hash::writeToFileH(const string& filename) {
+void HASH::writeToFileHASH(const string& filename) {
     ofstream file(filename);
     if (!file) {
         cout << "Не удалось открыть файл для записи." << endl;
@@ -112,25 +112,25 @@ void Hash::writeToFileH(const string& filename) {
 }
 
 // Чтение хеш-таблицы из файла
-void Hash::readFromFileH(const string& filename) {
+void HASH::readFromFileHASH(const string& filename) {
     ifstream file(filename);
     if (!file) {
         cout << "Не удалось открыть файл для чтения." << endl;
         return;
     }
 
-    clearH(); // Очищаем таблицу перед загрузкой новых данных
+    clearHASH(); // Очищаем таблицу перед загрузкой новых данных
 
     string key, value;
     while (file >> key >> value) {
-        insertH(key, value);
+        insertHASH(key, value);
     }
 
     file.close();
 }
 
 // Освобождение памяти вручную
-void Hash::clearH() {
+void HASH::clearHASH() {
     for (int i = 0; i < tableSize; i++) {
         Node* current = table[i];
         while (current) {
