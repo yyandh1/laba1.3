@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-
+#include <cmath>
 
 using namespace std;
 
@@ -19,6 +19,25 @@ int countNodes(CBNode* root) {
     return 1 + countNodes(root->left) + countNodes(root->right);
 }
 
+// Функция для определения высоты дерева
+int Height(CBNode* node) {
+    if (node == nullptr) {
+        return 0;
+    }
+    return max(Height(node->left), Height(node->right)) + 1;
+}
+
+// проверка: заполнен ли последний уровень
+bool isFull (CBNode*& root) {
+    int h = Height(root);
+    int countIfComplete = pow(2, h) - 1;
+    return countNodes(root) == countIfComplete;
+}
+
+// вызывается если последний уровень полностью заполнен
+// вызывается 
+
+
 void InsertCB(CBNode*& root, int value) {
     if (root == nullptr) {
         root = new CBNode(value);
@@ -35,12 +54,16 @@ void InsertCB(CBNode*& root, int value) {
         root->right = new CBNode(value);
         return;
     }
+
+    if (isFull(root)) {
+        InsertCB (root->left, value);
+        return;
+    }
     
-    // Если оба поддерева заполнены, рекурсивно пробуем вставить в левое или правое поддерево
-    if (countNodes(root->left) <= countNodes(root->right)) {
-        InsertCB(root->left, value);
+    if (isFull(root->left)) {
+        InsertCB (root->right, value);
     } else {
-        InsertCB(root->right, value);
+        InsertCB (root->left, value);
     }
 }
 
@@ -50,13 +73,13 @@ void InsertCB(CBNode*& root, int value) {
 
 // Поиск минимального значения
 int findMin(CBNode* node) {
-    if (node == nullptr) return INT_MAX;
+    if (node == nullptr) return 1000000;
     return min(node->value, min(findMin(node->left), findMin(node->right)));
 }
 
 // Поиск максимального значения
 int findMax(CBNode* node) {
-    if (node == nullptr) return INT_MIN;
+    if (node == nullptr) return 1000000;
     return max(node->value, max(findMax(node->left), findMax(node->right)));
 }
 
@@ -92,7 +115,7 @@ void writeNodeToFile(CBNode* node, ofstream& file, int depth) {
     writeNodeToFile(node->left, file, depth + 1);
     
     // Запись текущего узла с отступами
-    file << setw(depth * 4) << ""; // Устанавливаем отступы
+    file << string(depth * 4, ' '); // Устанавливаем отступы
     file << node->value << endl; // Записываем значение узла
 
     // Запись правого поддерева
@@ -140,13 +163,7 @@ void PrintLevel(CBNode* node, int level) {
     }
 }
 
-// Функция для определения высоты дерева
-int Height(CBNode* node) {
-    if (node == nullptr) {
-        return 0;
-    }
-    return max(Height(node->left), Height(node->right)) + 1;
-}
+
 
 // Функция для вывода дерева в виде "змейки"
 void PrintTreeCB(CBNode* root) {
